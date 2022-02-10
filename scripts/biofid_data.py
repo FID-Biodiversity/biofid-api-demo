@@ -80,8 +80,8 @@ class BiofidSearchResponseProcessing:
 
 
 def generate_dataframe_from_json_file(json_file_path: str, tsv_output_file_name: str):
-    from commons import read_json_file_content
-    from conversion import convert_taxon_location_data_to_dataframe
+    from scripts.commons import read_json_file_content
+    from scripts.conversion import convert_taxon_location_data_to_dataframe
     semantic_search_data = read_json_file_content(json_file_path)
     data_processing = BiofidSearchResponseProcessing(semantic_search_data)
     taxon_location_relations = data_processing.extract_taxon_location_relations()
@@ -211,25 +211,4 @@ def wrap_text_with_link(text: str, link: str) -> str:
 
 if __name__ == '__main__':
     generate_dataframe_from_json_file('/home/apachzelt/Downloads/Taxus-baccata-in-Deutschland.json', 'foo')
-
-
-# if __name__ == '__main__':
-#     import plotly.express as px
-#     import plotly.graph_objects as go
-#
-#     from commons import read_json_file_content
-#     from conversion import convert_taxon_location_data_to_dataframe
-#     from wikidata import get_coordinates_for_wikidata_uris
-#
-#     semantic_search_json_file_path = "/home/apachzelt/Downloads/biofid-search-extract(10).json"
-#
-#     semantic_search_data = read_json_file_content(semantic_search_json_file_path)
-#     data_processing = BiofidSearchResponseProcessing(semantic_search_data)
-#     taxon_location_relations = data_processing.extract_taxon_location_relations()
-#
-#     location_uris = [relationship.location.wikidata_uri
-#                      for relationship in taxon_location_relations]
-#     coordinates = get_coordinates_for_wikidata_uris(location_uris)
-#
-#     df = convert_taxon_location_data_to_dataframe(taxon_location_relations, coordinates)
 
