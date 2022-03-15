@@ -61,15 +61,14 @@ class BiofidSearchResponseProcessing:
     def __init__(self, semantic_search_data: dict):
         self.raw_data = semantic_search_data
         self.documents = []
+        self.extraction_strategies = {
+            'page': SamePageCooccurrence()
+        }
 
         self._extract_data_to_documents(semantic_search_data)
 
     def extract_taxon_location_relations(self, strategy_term: str = 'page') -> List[TaxonLocationData]:
-        extraction_strategy = {
-            'page': SamePageCooccurrence()
-        }
-
-        strategy = extraction_strategy[strategy_term]
+        strategy = self.extraction_strategies[strategy_term]
 
         return list(itertools.chain.from_iterable(extract_taxon_location_data_from_document(document, strategy)
                                                   for document in self.documents))
