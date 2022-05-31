@@ -50,12 +50,12 @@ class Biofid:
         if not uri.endswith('.json'):
             uri = f'{uri}.json'
 
-        return call_url(uri)
+        return call_url(uri, session=self._session)
 
     def _get_data(self, method_name, parameters) -> dict:
         url_string = generate_url(self.BASE_URL, method_name)
 
-        return call_url(url_string, parameters)
+        return call_url(url_string, parameters, session=self._session)
 
 
 def call_url(url: str, parameters: dict = None, session: requests.Session = None, authentication=None,
