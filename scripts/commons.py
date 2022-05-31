@@ -21,6 +21,9 @@ class Biofid:
 
     BASE_URL = 'https://www.biofid.de/api/v1/'
 
+    def __init__(self):
+        self._session = requests.Session()
+
     def get_term_context(self, term: str) -> dict:
         """ Calls for the corpus context of a given term or URI.
             These are terms that co-occur with the given term multiple times in the corpus.
@@ -41,6 +44,12 @@ class Biofid:
 
     def get_biofid_data_for_uri(self, uri: str):
         """ Calls the BIOfid website for knowledge data on the given URI. """
+
+        # Although the server will provide the correct format as requested by the header,
+        # giving the '.json' suffix avoids a redirect with additional handshakes for every request.
+        if not uri.endswith('.json'):
+            uri = f'{uri}.json'
+
         return call_url(uri)
 
     def _get_data(self, method_name, parameters) -> dict:
@@ -49,7 +58,7 @@ class Biofid:
         return call_url(url_string, parameters)
 
 
-def call_url(url: str, parameters: dict = None, authentication=None,
+def call_url(url: str, parameters: dict = None, session: requests.Session = None, authentication=None,
              response_content_type: str = 'application/json') -> dict:
     """ Calls a given URL and returns the response as dict.
         Parameters are optional.
@@ -57,9 +66,13 @@ def call_url(url: str, parameters: dict = None, authentication=None,
     log.info(f'Calling URL {url}...')
     log.debug(f'Parameters: {parameters}')
     log.debug(f'Response Content Type: {response_content_type}')
+    if session is not None:
+        log.debug('Using session!')
 
     headers = {'Content-type': response_content_type}
-    response = requests.get(url, params=parameters, auth=authentication, headers=headers)
+
+    request_callable = session if session is not None else requests
+    response = request_callable.get(url, params=parameters, auth=authentication, headers=headers)
     
     log.debug('Received response!')
 
